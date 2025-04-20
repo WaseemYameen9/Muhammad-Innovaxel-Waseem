@@ -1,11 +1,11 @@
-const express = require('express')
+const express = require("express")
+const bodyParser = require("body-parser")
+const urlRouter = require('./router/UrlRouter')
 
 const app = express()
 
-app.get('/',()=>{
-    return 'get request received'
-})
+app.use(urlRouter)
 
-app.listen(3000,()=>{
-    console.log("server is listening on port 3000")
+app.listen(5000, ()=>{
+    console.log("Server is listening on Port 5000")
 })
