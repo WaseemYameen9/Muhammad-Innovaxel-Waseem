@@ -1,26 +1,26 @@
 const Url = require("../model/Url");
 
 async function CreateShorterUrl(req, res) {
-  console.log(req.body);
+  //console.log(req.body);
   const { url } = req.body;
   const { nanoid } = await import("nanoid");
   const SUrl = nanoid(8);
   const data = await Url.create({
     originalUrl: url,
     shorterUrl: SUrl,
-    accessCount: 0,
   });
-  if(data){
-  res.status(201).send(data);
-  }
-  else{
-    res.status(400).send({"message":"Server or Validation Error"});
+  if (data) {
+    res.status(201).send(data);
+  } else {
+    res.status(400).send({ message: "Server or Validation Error" });
   }
 }
 
 async function GetShorterUrl(req, res) {
   const SUrl = req.params.shorterUrl;
-  const data = await Url.findOne({ shorterUrl: SUrl });
+  //const data = await Url.findOne({ shorterUrl: SUrl });
+  const data = await Url.findOneAndUpdate({ shorterUrl: SUrl }, { $inc: { accessCount: 1 } },{ new: true });
+
   if (data) {
     res.status(200).send(data);
   } else {
@@ -28,20 +28,40 @@ async function GetShorterUrl(req, res) {
   }
 }
 
+async function DeleteShortUrl(req, res) {
+  const SUrl = req.params.shorterUrl;
+  const result = await Url.deleteOne({ shorterUrl: SUrl });
+  if (result.deletedCount === 0) {
+    return res.status(404).send({ message: "Short URL not found" });
+  } else {
+    res.status(204).send({ message: "Url deleted Successfully" });
+  }
+}
 
-async function DeleteShortUrl(req,res){
-    const SUrl = req.params.shorterUrl;
-    const result = await Url.deleteOne({shorterUrl: SUrl})
-    if (result.deletedCount === 0) {
-        return res.status(404).send({ "message": "Short URL not found" });
-    }
-    else{
-        res.status(204).send({"message":"Url deleted Successfully"})
-    }
+async function UpdateShortUrl(req, res) {
+  const { url } = req.body;
+  const SUrl = req.params.shorterUrl;
+  const result = await Url.findOneAndUpdate(
+    { shorterUrl: SUrl },
+    { $set: { originalUrl: url } }
+  );
+
+  if (result.matchedCount === 0) {
+    return res.status(404).json({ message: "Short URL not found" });
+  }
+
+  res.status(200).json(result);
+}
+async function GetStats(req, res) {
+  const SUrl = req.params.shorterUrl;
+  const data = await Url.find({ shorterUrl: SUrl });
+  return res.status(200).send(data);
 }
 
 module.exports = {
   CreateShorterUrl,
   GetShorterUrl,
   DeleteShortUrl,
+  UpdateShortUrl,
+  GetStats,
 };
