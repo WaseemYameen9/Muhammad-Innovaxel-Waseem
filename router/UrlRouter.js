@@ -4,6 +4,7 @@ const router = express.Router()
 
 router.post('/shorten',UrlController.CreateShorterUrl)
 router.get('/shorten/:shorterUrl',UrlController.GetShorterUrl)
+router.delete('/shorten/:shorterUrl',UrlController.DeleteShortUrl)
 
 
 module.exports = router

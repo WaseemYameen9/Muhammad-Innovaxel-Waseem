@@ -28,7 +28,20 @@ async function GetShorterUrl(req, res) {
   }
 }
 
+
+async function DeleteShortUrl(req,res){
+    const SUrl = req.params.shorterUrl;
+    const result = await Url.deleteOne({shorterUrl: SUrl})
+    if (result.deletedCount === 0) {
+        return res.status(404).send({ "message": "Short URL not found" });
+    }
+    else{
+        res.status(204).send({"message":"Url deleted Successfully"})
+    }
+}
+
 module.exports = {
   CreateShorterUrl,
   GetShorterUrl,
+  DeleteShortUrl,
 };
