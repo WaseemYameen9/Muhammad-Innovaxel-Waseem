@@ -4,7 +4,7 @@ const urlRouter = require('./router/UrlRouter')
 const db = require('./services/db')
 
 const app = express()
-app.use(bodyParser)
+app.use(bodyParser.json())
 
 //router
 app.use(urlRouter)

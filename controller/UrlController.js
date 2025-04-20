@@ -1,22 +1,34 @@
-const Url = require('../model/Url')
+const Url = require("../model/Url");
 
-async function CreateShorterUrl(req,res)
-{
-    console.log(req.body)
-    const {OUrl} = req.body
-    const { nanoid } = await import('nanoid');
-    const SUrl = nanoid(8)
-    URL.create({
-        originalUrl: OUrl,
-        shorterUrl: SUrl,
-        accessCount: 0,
-    })
-    const message ={
-        url: "http://localhost:5000/"+SUrl
-    }
-    res.status(200).send(message)
+async function CreateShorterUrl(req, res) {
+  console.log(req.body);
+  const { url } = req.body;
+  const { nanoid } = await import("nanoid");
+  const SUrl = nanoid(8);
+  const data = await Url.create({
+    originalUrl: url,
+    shorterUrl: SUrl,
+    accessCount: 0,
+  });
+  if(data){
+  res.status(201).send(data);
+  }
+  else{
+    res.status(400).send({"message":"Server or Validation Error"});
+  }
+}
+
+async function GetShorterUrl(req, res) {
+  const SUrl = req.params.shorterUrl;
+  const data = await Url.findOne({ shorterUrl: SUrl });
+  if (data) {
+    res.status(200).send(data);
+  } else {
+    res.status(404).send({ message: "No url found" });
+  }
 }
 
 module.exports = {
-    CreateShorterUrl,
-}
+  CreateShorterUrl,
+  GetShorterUrl,
+};
