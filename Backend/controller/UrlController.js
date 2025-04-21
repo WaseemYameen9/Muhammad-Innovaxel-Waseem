@@ -41,12 +41,12 @@ async function DeleteShortUrl(req, res) {
   try {
     const result = await Url.deleteOne({ shorterUrl: SUrl });
     if (result.deletedCount === 0) {
-      return res.status(404).send({ message: "Short URL not found" });
+      return res.status(404).send({ "message": "Short URL not found" });
     } else {
-      res.status(204).send({ message: "Url deleted Successfully" });
+      return res.status(204).send({ "message": "Url deleted Successfully" });
     }
   } catch (err) {
-    return res.status(404).send({ message: err });
+    return res.status(404).send({ "message": err });
   }
 }
 
